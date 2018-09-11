@@ -77,7 +77,7 @@ public class SwrveIntegration extends Integration<Void> {
     //   }
     // }
     SwrveSDK.event(track.event(), payload);
-    logger.verbose("SwrveSDK.event(%s, %s)", track.event(), payload);
+    // logger.verbose("SwrveSDK.event(%s, %s)", track.event(), payload);
   }
 
   @Override
