@@ -1,17 +1,18 @@
 package com.swrve.segment;
 
 import android.app.Application;
-import com.swrve.sdk.config.SwrveConfig;
-import com.swrve.sdk.SwrveHelper;
-import com.swrve.sdk.SwrveSDK;
+
 import com.segment.analytics.Analytics;
-import com.segment.analytics.Traits;
 import com.segment.analytics.ValueMap;
 import com.segment.analytics.integrations.IdentifyPayload;
 import com.segment.analytics.integrations.Integration;
 import com.segment.analytics.integrations.Logger;
 import com.segment.analytics.integrations.ScreenPayload;
 import com.segment.analytics.integrations.TrackPayload;
+import com.swrve.sdk.SwrveHelper;
+import com.swrve.sdk.SwrveSDK;
+import com.swrve.sdk.config.SwrveConfig;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,21 +64,22 @@ public class SwrveIntegration extends Integration<Void> {
   @Override
   public void track(TrackPayload track) {
     super.track(track);
-    // Map<String, String> payload = new HashMap<>();
-    // for (String key : track.properties().keySet()) {
-    //   Object value = track.properties().get(key);
-    //   if (value instanceof Map) {
-    //     for (String subKey : value.keySet()) {
-    //       String newKey = key + "." + subKey;
-    //       String newValue = value.get(subKey).toString();
-    //       payload.put(newKey, newValue);
-    //     }
-    //   } else {
-    //     payload.put(key,value.toString());
-    //   }
-    // }
-    // SwrveSDK.event(track.event(), payload);
-    // logger.verbose("SwrveSDK.event(%s, %s)", track.event(), payload);
+    Map<String, String> payload = new HashMap<>();
+    for (String key : track.properties().keySet()) {
+      Object value = track.properties().get(key);
+      Map<String, Object> valueMap = (value instanceof Map) ? (Map) value : null;
+      if (valueMap != null) {
+        for (String subKey : valueMap.keySet()) {
+          String newKey = key + "." + subKey;
+          String newValue = valueMap.get(subKey).toString();
+          payload.put(newKey, newValue);
+        }
+      } else {
+        payload.put(key,value.toString());
+      }
+    }
+    SwrveSDK.event(track.event(), payload);
+    logger.verbose("SwrveSDK.event(%s, %s)", track.event(), payload);
   }
 
   @Override
